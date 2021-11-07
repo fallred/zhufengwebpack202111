@@ -1,3 +1,8 @@
-let title = require('./title');
-console.log(title);
-console.log(title.age);
+
+
+const load = document.getElementById('load');
+load.addEventListener('click', () => {
+    import(/* webpackChunkName: 'title' */'./title').then(result => {
+        console.log(result.default);
+    });
+});
