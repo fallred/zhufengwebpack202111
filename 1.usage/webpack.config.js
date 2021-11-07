@@ -3,7 +3,7 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const webpack = require('webpack');
 
 module.exports = {
-    mode: 'production',//none production development
+    mode: 'development',//none production development
     //指定项目打包的入口
     entry: './src/index.js',
     output: {
@@ -15,12 +15,34 @@ module.exports = {
     devtool: false,
     devServer: {
         port: 8080,//配置开发预览服务器的端口号8080
-        open: true//打包后会自动打开浏览器
+        open: true,//打包后会自动打开浏览器
+        /* proxy: {
+            //把访问路径是以/api开头的请求都转发到http://localhost:3000
+            '/api': {
+                target: 'http://localhost:3000',//重定向的域名
+                pathRewrite: { //重写的路径
+                    "^/api": ""
+                }
+            }
+        } */
+        //在 webpack-dev-server静态资源中间件处理之前，可以用于拦截部分请求返回特定内容，以实现简单的mock
+        onBeforeSetupMiddleware({ app }) {
+            app.get('/api/users', (req, res) => {
+                res.json([{ id: 1, name: "张三" }, { id: 2, name: "李四" }]);
+            });
+        }
     },
     resolve: {
         alias: {
             '@': path.resolve('src')
         }
+    },
+    //如果你配置了externals,key是库的名字，值是全局变量名
+    //以后你再引入这个库的时候，直接从全局变量名上取值即可
+    //key就是模块名 值是全局全局变量名，谁给全局变量赋值的呢 cdn
+
+    externals: {
+        lodash: '_'
     },
     module: {
         rules: [
@@ -32,6 +54,20 @@ module.exports = {
                      path.resolve(__dirname, 'loaders', 'loader3.js')
                  ]
              }, */
+            {
+                test: /isarray/,
+                use: [
+                    {
+                        loader: 'expose-loader',
+                        options: {
+                            exposes: {
+                                globalName: 'isarray',
+                                override: true
+                            }
+                        }
+                    }
+                ]
+            },
             {
                 test: /\.css$/,
                 use: [
@@ -82,7 +118,10 @@ module.exports = {
     plugins: [
         new HtmlWebpackPlugin({
             template: './src/index.html'
-        })
+        }),
+        /* new webpack.ProvidePlugin({
+            isarray: 'isarray'
+        }) */
     ]
 }
 

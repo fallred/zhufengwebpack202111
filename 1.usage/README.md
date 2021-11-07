@@ -5,9 +5,9 @@ https://gitee.com/zhufengpeixun/zhufengwebpack202111
 http://www.zhufengpeixun.com/strong/html/103.1.webpack-usage.html
 - 上课进度
 https://docs.qq.com/sheet/DSmh3Z0dTVGRBa2p3 
-- 视频地址
-  - 上一期 
-  - 这一期  
+- 视频地址 https://www.javascriptpeixun.cn/goods/show/445
+  - 上一期  第2章 202108
+  - 这一期  第1章 202111
 
 ## 大纲
 - webpack5安装的基本使用
@@ -104,4 +104,20 @@ webpack4 关于图片需要 使用file-loader url-loader
 webpack5 不再需要
 file-loader=>asset/resource 把图片拷贝到输出目录里去，返回一个输出后的路径，包括文件
 url-loader=>asset/inline 不拷贝文件，直接把源文件变成base64字符串内嵌到输出结果
+
+js兼容性
+polyfill preset-env preset-react
+eslint
+eslint prettier git hooks 放在一起
+source可以放在一起
+
+
+1.直接引入
+每次使用都需要手工导入
+2.插件引入
+如果使用webpack.ProvidePlugin插件引入的话，则不再需要你在模块手工引入
+3.但在没有全局变量，你在模块外是不能访问的
+如果想在任何地方访问此变量，需要把此变量设置为环境变量 `window.isarray`
+expose-loader 可以把模块添加到全局对象上
+以上三种方式，都需要打包库的代码，不能使用CDN
 

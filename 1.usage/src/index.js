@@ -1,5 +1,6 @@
-//import styles from './index.css'
-import './less.less';
-import './sass.scss'
-let styles = require('./index.css');
-console.log(styles);
+
+
+
+fetch('/api/users').then(res => res.json()).then(res => {
+    console.log(res);
+})

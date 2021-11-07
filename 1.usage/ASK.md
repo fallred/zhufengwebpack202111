@@ -69,3 +69,34 @@ scss
 水星
 Use里面的插件，会依次执行吗？还是会自动处理先后顺序 
 从右往左依次执行的
+
+14:10
+滕小好
+自己写的util文件也可以这样变成全局的吗？ 
+
+new webpack.ProvidePlugin
+的isarray好像写错了 
+
+14:31
+大先生
+key是根据什么来写的，为什么Loadash不行 
+14:39
+
+14:52
+tykdn
+不同的路由怎么返回不同的静态资源，懒加载的话 
+
+
+奋斗ing
+proxy怎么处理的 简单实现
+
+tykdn
+就是那个devserver 
+
+
+proxy的问题
+接口请求我们都用绝对路径，不是相对路径
+类似 abc.com/api/data/list 浏览器会直接请求对应的域名接口接口，不会把这个请求发给当前服务器
+不是 /api/data/list 
+ 
+
