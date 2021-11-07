@@ -5,7 +5,9 @@ https://gitee.com/zhufengpeixun/zhufengwebpack202111
 http://www.zhufengpeixun.com/strong/html/103.1.webpack-usage.html
 - 上课进度
 https://docs.qq.com/sheet/DSmh3Z0dTVGRBa2p3 
-
+- 视频地址
+  - 上一期 
+  - 这一期  
 
 ## 大纲
 - webpack5安装的基本使用
@@ -48,10 +50,10 @@ https://docs.qq.com/sheet/DSmh3Z0dTVGRBa2p3
   - webpack4之后引入mode概念
 
 - 如何动态设置不同的环境
-  - --mode用来设置模块内的process.env.NODE_ENV
+  - --mode用来设置模块内的`process.env.NODE_ENV`
   - --env用来设置webpack配置文件的函数参数
   - cross-env用来设置node环境的process.env.NODE_ENV
-  - DefinePlugin用来设置模块内的全局变量
+  - DefinePlugin用来设置模块内的全局变量,可以用于模块内的字符串替换
 
 mode
  - production 如果设置为production，webpack会默认启动一些生产环境插件 比如压缩JS
@@ -76,3 +78,30 @@ You may need an appropriate loader to handle this file type, currently no loader
 | }
 
 'style-loader', 'css-loader'
+
+
+
+## webpack-dev-server开发服务器的原理
+- 也是会用webpack从入口文件进行打包，然后输出到输出目录，这个输出是输出的内存文件系统里去了
+- 然后会启动http服务器预览我们的项目 
+
+
+
+less 用于把less编译成CSS
+less-loader 
+node-sass 用于把sass编译成CSS
+sass-loader
+
+background-image: url(~image/kf.jpg);
+//为了引入node_modules下面的资源文件，比如说bootstrap，可以添加 ~前缀
+
+
+CSS兼容 性和importLoaders
+importLoaders 允许或者说启动几个数量的loaders应用在import 的文件
+
+
+webpack4 关于图片需要 使用file-loader url-loader 
+webpack5 不再需要
+file-loader=>asset/resource 把图片拷贝到输出目录里去，返回一个输出后的路径，包括文件
+url-loader=>asset/inline 不拷贝文件，直接把源文件变成base64字符串内嵌到输出结果
+

@@ -1,2 +1,5 @@
-console.log(process.env.NODE_ENV);
-
+//import styles from './index.css'
+import './less.less';
+import './sass.scss'
+let styles = require('./index.css');
+console.log(styles);
