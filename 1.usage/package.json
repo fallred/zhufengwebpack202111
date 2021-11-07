@@ -1,0 +1,20 @@
+{
+  "name": "1.usage",
+  "version": "1.0.0",
+  "description": "- 代码\r https://gitee.com/zhufengpeixun/zhufengwebpack202111 \r - 课件 \r http://www.zhufengpeixun.com/strong/html/103.1.webpack-usage.html#t01.%20webpack%E4%BB%8B%E7%BB%8D \r - 上课进度\r https://docs.qq.com/sheet/DSmh3Z0dTVGRBa2p3",
+  "main": "index.js",
+  "scripts": {
+    "prod": "webpack --mode=production",
+    "dev": "webpack --mode=development"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "css-loader": "^6.5.1",
+    "html-webpack-plugin": "^5.5.0",
+    "style-loader": "^3.3.1",
+    "webpack": "^5.62.1",
+    "webpack-cli": "^4.9.1"
+  }
+}
