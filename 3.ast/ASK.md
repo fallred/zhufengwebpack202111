@@ -8,3 +8,15 @@ babel-core包括三部分
 20:51
 奋斗ing
 replacewith什么意思 
+xy08879
+这个插件只适用于第三方插件吗  自己写的文件 可以tree shaking吗 
+奋斗ing
+use是数组和对象两种写法吗 
+提
+use值可以是数组，放多个loader,也可以是对象，只放一个loader
+瑞思拜撤回了一条消息
+
+
+xy08879
+要是一部分默认  一部分部分导入呢 
+
