@@ -54,7 +54,7 @@ if (request.startsWith('!!')) {
     loaders = [...postLoaders, ...inlineLoaders, ...normalLoaders, ...preLoaders];
 }
 //用于把loader的名称转变成一个绝对路径
-const resolveLoader = loader => path.resolve(__dirname, 'loaders', loader);
+const resolveLoader = loader => path.resolve(__dirname, 'runner', loader);
 loaders = loaders.map(resolveLoader);
 runLoaders({
     resource,//要加载和转换的模块

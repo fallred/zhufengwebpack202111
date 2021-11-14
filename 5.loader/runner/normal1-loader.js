@@ -4,7 +4,10 @@ function loader(source) {
     return source + '//normal1';
 }
 //style=loader的时候 会用到
-loader.pitch = function () {
+loader.pitch = function (remainingRequest, previousRequest, data) {
+    console.log(remainingRequest);
+    console.log(previousRequest);
+    console.log(data);
     console.log('normal1 pitch');
     return 'var v = "normal1"';
 }

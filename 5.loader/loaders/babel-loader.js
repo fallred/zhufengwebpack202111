@@ -6,7 +6,7 @@ const babel = require('@babel/core');
  * 返回一个新的内容
  */
 function loader(source) {
-    let options = this.getOptions({});
+    let options = this.getOptions({});//loader-context
     let { code } = babel.transform(source, options);
     return code;//转换成ES5的内容
 }
