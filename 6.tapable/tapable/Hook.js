@@ -8,9 +8,13 @@ class Hook {
         this.taps = [];
         this._x = null;//[fn]
         this.call = CALL_DELEGATE;
+        this.callAsync = CALL_ASYNC_DELEGATE;
     }
     tap(options, fn) {
         this._tap('sync', options, fn);
+    }
+    tapAsync(options, fn) {
+        this._tap('async', options, fn);
     }
     _tap(type, options, fn) {
         if (typeof options === 'string') {
@@ -37,5 +41,10 @@ const CALL_DELEGATE = function (...args) {
     this.call = this._createCall('sync');
     //this是hook实例，我用this调用call方法，call里面的this肯定是指向hook实例的
     return this.call(...args);
+}
+const CALL_ASYNC_DELEGATE = function (...args) {
+    this.callAsync = this._createCall('async');
+    //this是hook实例，我用this调用call方法，call里面的this肯定是指向hook实例的
+    return this.callAsync(...args);
 }
 module.exports = Hook;

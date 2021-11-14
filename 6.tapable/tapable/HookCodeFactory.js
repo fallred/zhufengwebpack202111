@@ -4,8 +4,11 @@ class HookCodeFactory {
         //把事件函数对象中的函数取出来，拼成一个数组传递给 hook._x
         hook._x = options.taps.map(tap => tap.fn);
     }
-    args() {
+    args(options = {}) {
+        let { before, after } = options;
         let allArgs = this.options.args;//[name,age]
+        if (before) allArgs = [before, ...allArgs];
+        if (after) allArgs = [...allArgs, after];
         return allArgs.join(',');//name,age
     }
     init(options) {
@@ -38,6 +41,12 @@ class HookCodeFactory {
                     this.header() + this.content()
                 );
                 break;
+            case 'async':
+                fn = new Function(
+                    this.args({ after: '_callback' }),//name,age
+                    this.header() + this.content()
+                );
+                break;
             default:
                 break;
         }
@@ -49,6 +58,19 @@ class HookCodeFactory {
             return '';
         }
         let code = '';
+        for (let i = 0; i < taps.length; i++) {
+            let content = this.callTap(i);
+            code += content;
+        }
+        return code;
+    }
+    callTapsParallel() {
+        let taps = this.options.taps;
+        let code = `var _counter = ${taps.length};\n`;
+        code += `
+        var _done = (function () {
+            _callback();
+        });`;
         for (let i = 0; i < taps.length; i++) {
             let content = this.callTap(i);
             code += content;
@@ -67,6 +89,13 @@ class HookCodeFactory {
         switch (tapInfo.type) {
             case 'sync':
                 code += `_fn${tapIndex}(${this.args()})\n`;
+                break;
+            case 'async':
+                code += `
+                _fn${tapIndex}(${this.args({
+                    after: `function () {
+                      if (--_counter === 0) _done();
+                    }`})});`;
                 break;
             default:
                 break;

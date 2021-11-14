@@ -1,6 +1,6 @@
-const { AsyncParallelHook } = require('tapable');
+const { AsyncParallelHook } = require('./tapable');
 const hook = new AsyncParallelHook(["name"]);
-/* console.time('cost');
+console.time('cost');
 hook.tapAsync('1', (name, callback) => {
     setTimeout(() => {
         console.log(1);
@@ -22,9 +22,9 @@ hook.tapAsync('3', (name, callback) => {
 hook.callAsync('zhufeng', (err) => {
     console.log(err);
     console.timeEnd('cost');
-}); */
+});
 
-
+/*
 console.time('cost');
 hook.tapPromise('1', (name) => {
     return new Promise((resolve) => {
@@ -53,4 +53,4 @@ hook.tapPromise('3', (name,) => {
 hook.promise('zhufeng').then(() => {
     console.log('done');
     console.timeEnd('cost');
-});
+}); */
