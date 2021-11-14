@@ -1,7 +1,6 @@
-const { SyncHook } = require('tapable');
+const { SyncHook } = require('./tapable');
 debugger
 const hook = new SyncHook(["name", "age"]);
-
 hook.tap('1', (name, age) => {
     console.log(1, name, age);
     //不关心返回值
