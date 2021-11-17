@@ -4,6 +4,7 @@ const types = require('@babel/types');
 const parser = require('@babel/parser');
 const traverse = require('@babel/traverse').default;
 const generator = require('@babel/generator').default;
+const { SyncHook } = require('tapable');
 const baseDir = toUnixPath(process.cwd());
 function toUnixPath(filePath) {
     return filePath.replace(/\\/g, '/');
@@ -17,6 +18,9 @@ class Compilation {
         //里面放置所有的代码块
         this.chunks = [];
         this.assets = {};
+        this.hooks = {
+            chunkAsset: new SyncHook(["chunk", "filename"])
+        }
     }
     build(onCompiled) {
         //5.根据配置中的entry找出入口文件
@@ -44,6 +48,7 @@ class Compilation {
             //9.再把每个 Chunk 转换成一个单独的文件加入到输出列表
             this.chunks.forEach(chunk => {
                 let filename = this.options.output.filename.replace('[name]', chunk.name);
+                this.hooks.chunkAsset.call(chunk, filename);
                 this.assets[filename] = getSource(chunk);
             });
         }

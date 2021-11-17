@@ -1,6 +1,7 @@
 const path = require('path');
 const RunPlugin = require('./plugins/run-plugin');
 const DonePlugin = require('./plugins/done-plugin');
+const AssetPlugin = require('./plugins/assets-plugin');
 module.exports = {
     mode: 'production',
     devtool: false,
@@ -31,6 +32,7 @@ module.exports = {
     },
     plugins: [
         new RunPlugin(),
-        new DonePlugin()
+        new DonePlugin(),
+        new AssetPlugin()
     ]
 }

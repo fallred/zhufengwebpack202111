@@ -1,6 +1,6 @@
 function anonymous(name, _callback) {
     var _x = this._x;
-    
+
     var _counter = 3;
     var _done = (function () {
         _callback();

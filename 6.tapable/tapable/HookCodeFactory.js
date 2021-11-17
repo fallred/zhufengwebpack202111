@@ -20,6 +20,17 @@ class HookCodeFactory {
     header() {
         let code = '';
         code += `var _x = this._x;\n`;
+        let interceptors = this.options.interceptors;
+        if (interceptors.length > 0) {
+            code += `var _taps = this.taps;\n`;
+            code += `var _interceptors = this.interceptors;\n`;
+            for (let i = 0; i < interceptors.length; i++) {
+                let interceptor = interceptors[i];
+                if (interceptor.call) {
+                    code += `_interceptors[${i}].call(${this.args()});\n`;
+                }
+            }
+        }
         return code;
     }
 
@@ -44,7 +55,20 @@ class HookCodeFactory {
             case 'async':
                 fn = new Function(
                     this.args({ after: '_callback' }),//name,age
-                    this.header() + this.content()
+                    this.header() + this.content({ onDone: () => `_callback();\n` })
+                );
+                break;
+            case 'promise':
+                let taps = this.options.taps.length;
+                let tapsContent = this.content({ onDone: () => `_resolve();\n` });
+                let content = `
+                    return new Promise((function (_resolve) {
+                        ${tapsContent}
+                    }));
+                `;
+                fn = new Function(
+                    this.args({}),//name,age
+                    this.header() + content
                 );
                 break;
             default:
@@ -64,12 +88,12 @@ class HookCodeFactory {
         }
         return code;
     }
-    callTapsParallel() {
+    callTapsParallel({ onDone }) {
         let taps = this.options.taps;
         let code = `var _counter = ${taps.length};\n`;
         code += `
         var _done = (function () {
-            _callback();
+            ${onDone()}
         });`;
         for (let i = 0; i < taps.length; i++) {
             let content = this.callTap(i);
@@ -84,6 +108,13 @@ class HookCodeFactory {
      */
     callTap(tapIndex) {
         let code = '';
+        let interceptors = this.options.interceptors;
+        if (interceptors.length > 0) {
+            code += `var _tap${tapIndex} = _taps[${tapIndex}];\n`;
+            for (let i = 0; i < interceptors.length; i++) {
+                code += ` _interceptors[${i}].tap(_tap${tapIndex});\n`;
+            }
+        }
         code += `var _fn${tapIndex} = _x[${tapIndex}];\n`;
         let tapInfo = this.options.taps[tapIndex];
         switch (tapInfo.type) {
@@ -96,6 +127,14 @@ class HookCodeFactory {
                     after: `function () {
                       if (--_counter === 0) _done();
                     }`})});`;
+                break;
+            case 'promise':
+                code += `
+                var _promise${tapIndex} = _fn${tapIndex}(${this.args()});
+                _promise${tapIndex}.then((function () {
+                    if (--_counter === 0) _done();
+                }));
+                `
                 break;
             default:
                 break;
