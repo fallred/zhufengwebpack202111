@@ -52,7 +52,7 @@ class AutoExternalPlugin {
             //2.可以通过HtmlWebpackPlugin.getHooks取现这些钩子
             //3.改变标签
             HtmlWebpackPlugin.getHooks(compilation).alterAssetTags.tapAsync('AutoExternalPlugin', (htmlData, callback) => {
-                Reflect.ownKeys(this.options).filter(key => this.importedModules.has(key)).forEach(key => {
+                [...this.importedModules].forEach(key => {
                     htmlData.assetTags.scripts.unshift({
                         tagName: 'script',
                         voidTag: false,
