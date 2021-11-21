@@ -13,23 +13,29 @@ const PurgecssPlugin = require("purgecss-webpack-plugin");
 const { glob } = require('glob');
 const smw = new SpeedMeasureWebpackPlugin();
 module.exports = {
-    mode: 'none',
+    mode: 'development',
     devtool: false,
-    entry: {
-        main: './src/index.js',
-        vendor: ['lodash']
-    },
+    entry: './src/index.js',
     optimization: {
+        moduleIds: 'named',
+        chunkIds: 'named',
+        usedExports: true,
         minimize: true,
         minimizer: [new TerserPlugin(), new CssMinimizerPlugin()]
     },
+    /*  cache: {
+         type: 'filesystem' //写入缓存到硬盘
+     }, */
+    /*  snapshot: {
+         managedPaths: [path.resolve(__dirname, 'node_modules')],//配置包管理器管理的路径
+     }, */
     output: {
         path: path.resolve(__dirname, 'dist'),
-        filename: '[name].[chunkhash].js',
+        //filename: '[name].[fullhash].js',
         //libraryExport: 'minus',//配置导出的模块中哪些子模块需要被 导出，它只有在libraryTarget设置为commonjs的时候才有用
-        library: 'calculator',//指定导出库的名称 
+        //library: 'calculator',//指定导出库的名称 
         //UniversalModuleDefinition
-        libraryTarget: 'umd'//以何种方式导出 this.calculator= window.calculator= global.calculator=
+        //libraryTarget: 'umd'//以何种方式导出 this.calculator= window.calculator= global.calculator=
     },
     //此处是在模块里找依赖的模块时有效
     resolve: {
@@ -41,7 +47,12 @@ module.exports = {
         //mainFields: ['browser', 'module', 'main'],
         // target 的值为其他时，mainFields 默认值为：
         //mainFields: ["module", "main"],
-        mainFiles: ["index", "main"]
+        mainFiles: ["index", "main"],
+        fallback: {
+            crypto: false,
+            buffer: false,
+            stream: false
+        }
     },
     //此处只用来找 loader时有效
     resolveLoader: {
@@ -54,17 +65,24 @@ module.exports = {
              return /query|lodash/.test(moduleName);
          }, */
         rules: [
-            /*  {
-                 test: /\.js$/,
-                 exclude: /node_modules/,
-                 use: [
-                     {
-                         loader: 'babel-loader',
-                         options: {}
-                     },
-                     'loader1'
-                 ]
-             }, */
+            {
+                test: /\.js$/,
+                exclude: /node_modules/,
+                use: [
+                    {
+                        loader: 'thread-loader',
+                        options: {
+                            workers: 3
+                        }
+                    },
+                    {
+                        loader: 'babel-loader',
+                        options: {//babel编译 后把结果缓存起来，下次编译 的时候可以复用上次的结果
+                            //cacheDirectory: true
+                        }
+                    }
+                ]
+            },
             {
                 test: /\.css$/,
                 use: [MiniCssExtractPlugin.loader, 'css-loader']
@@ -87,10 +105,10 @@ module.exports = {
     plugins: [
         new HtmlWebpackPlugin({
             template: './src/index.html',
-            minify: {
+            /* minify: {
                 collapseWhitespace: true,
                 removeComments: true
-            }
+            } */
         }),
         new webpack.IgnorePlugin({
             contextRegExp: /moment$/,//忽略 哪个模块
@@ -102,10 +120,10 @@ module.exports = {
         new CleanWebpackPlugin({
             cleanOnceBeforeBuildPatterns: ['**/*']
         }),
-        new PurgecssPlugin({
-            paths: glob.sync(`${path.resolve('src')}/**/*`, { nodir: true })
-        })
-        //new OptimizeCssAssetsWebpackPlugin()
+        /* new PurgecssPlugin({
+            paths: glob.sync(`${path.resolve('src')}/ `, { nodir: true })
+        }), */
+        //new webpack.optimize.ModuleConcatenationPlugin()
 
         //new BundleAnalyzerPlugin()
     ]

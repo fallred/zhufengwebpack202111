@@ -1,2 +1,4 @@
-import './index.css';
-console.log('index3');
+import './index.css'
+import { getTitle } from './title';
+let t = getTitle();
+console.log(t);

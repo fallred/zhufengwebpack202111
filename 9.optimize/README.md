@@ -46,3 +46,34 @@ style/main.4305adaee27b2a3244e5.css
 chunkhash
 每个入口都有自己的chunkhash
 如果本入口对应的文件发生改变，chunkhash会改变，如果没有改变，chunkhash会保持不变
+
+webpack treeshaking 虽然有很大改进，但是相对于rollup，还是差点
+手写rollup和treeshaking过程
+
+
+在webpack5的默认情况下
+src_three_js.js
+其实就是模块的相对路径 /换成_,把.换成_
+
+开发的时候 可以使用named方便阅读和调试
+生产环境的时候，使用named就不太合适了
+1.太长 2.信息泄露
+
+生产环境 用名字计算出来的hash值
+生产环境以前是数字 1 2 3 ，webpack5以事
+deterministic 
+根据模块名生成的hash值
+
+
+webpack是如何判断代码有效，需要保留的
+1.你得引入
+2.你得读它或者说使用它
+
+
+16:15
+Ys
+treeshaking 需要es6 才行吗 
+必须 是esm esmodules commonjs是不行的
+水星
+是因为没有标签用到吗？ 
+
