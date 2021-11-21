@@ -1,4 +1,5 @@
-function add() { }
-function minus() { }
-exports.add = add;
-exports.minus = minus;
+import './index.css'
+let imgSrc = require('./kf.jpg');
+let img = new Image();
+img.src = imgSrc;
+document.body.appendChild(img);

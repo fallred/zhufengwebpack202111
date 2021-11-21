@@ -18,3 +18,10 @@ exports.xx 就是export {
 
 libraryExport如果不能就导出整个exports对象
 如果给了就导出指定的子属性
+
+
+14:19
+135****5238
+提取css的插件是和 speed那个插件一起用会报错 
+水星
+html的压缩就是自己压缩，不和js和css一起 

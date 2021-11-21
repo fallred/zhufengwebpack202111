@@ -4,11 +4,22 @@ const bootstrap = path.resolve(__dirname, 'node_modules/bootstrap/dist/css/boots
 const webpack = require('webpack');
 const SpeedMeasureWebpackPlugin = require('speed-measure-webpack-plugin');
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+//const OptimizeCssAssetsWebpackPlugin = require('optimize-css-assets-webpack-plugin');
+const CssMinimizerPlugin = require("css-minimizer-webpack-plugin");
+const TerserPlugin = require('terser-webpack-plugin');
+const { CleanWebpackPlugin } = require('clean-webpack-plugin');
+const PurgecssPlugin = require("purgecss-webpack-plugin");
+const { glob } = require('glob');
 const smw = new SpeedMeasureWebpackPlugin();
 module.exports = {
-    mode: 'development',
+    mode: 'none',
     devtool: false,
     entry: './src/index.js',
+    optimization: {
+        minimize: true,
+        minimizer: [new TerserPlugin(), new CssMinimizerPlugin()]
+    },
     output: {
         path: path.resolve(__dirname, 'dist'),
         filename: 'main.js',
@@ -40,31 +51,59 @@ module.exports = {
              return /query|lodash/.test(moduleName);
          }, */
         rules: [
-            {
-                test: /\.js$/,
-                exclude: /node_modules/,
-                use: [
-                    {
-                        loader: 'babel-loader',
-                        options: {}
-                    },
-                    'loader1'
-                ]
-            },
+            /*  {
+                 test: /\.js$/,
+                 exclude: /node_modules/,
+                 use: [
+                     {
+                         loader: 'babel-loader',
+                         options: {}
+                     },
+                     'loader1'
+                 ]
+             }, */
             {
                 test: /\.css$/,
-                use: ['style-loader', 'css-loader']
+                use: [MiniCssExtractPlugin.loader, 'css-loader']
+            },
+            {
+                test: /\.(jpg|png|gif)$/,
+                type: 'asset',//必定会输出一个文件
+                parser: {
+                    //根据这个条件做选择，如果小于maxSize的话就变成base64字符串，如果大于的就拷贝文件并返回新的地址
+                    dataUrlCondition: {
+                        maxSize: 4 * 1024 // 4kb
+                    }
+                },
+                generator: {
+                    filename: 'images/[hash][ext]'
+                }
             }
         ]
     },
     plugins: [
         new HtmlWebpackPlugin({
-            template: './src/index.html'
+            template: './src/index.html',
+            minify: {
+                collapseWhitespace: true,
+                removeComments: true
+            }
         }),
         new webpack.IgnorePlugin({
             contextRegExp: /moment$/,//忽略 哪个模块
             resourceRegExp: /locale///忽略模块内的哪些资源
         }),
+        new MiniCssExtractPlugin({
+            filename: 'style/[name].css'
+        }),
+        new CleanWebpackPlugin({
+            cleanOnceBeforeBuildPatterns: ['**/*']
+        }),
+        new PurgecssPlugin({
+            paths: glob.sync(`${path.resolve('src')}/**/*`, { nodir: true })
+        })
+        //new OptimizeCssAssetsWebpackPlugin()
+
         //new BundleAnalyzerPlugin()
     ]
 };
