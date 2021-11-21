@@ -1,5 +1,2 @@
-import './index.css'
-let imgSrc = require('./kf.jpg');
-let img = new Image();
-img.src = imgSrc;
-document.body.appendChild(img);
+import './index.css';
+console.log('index3');
