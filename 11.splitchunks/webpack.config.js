@@ -1,8 +1,7 @@
 
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const AssetPlugin = require('./asset-plugin');
-//const PreloadWebpackPlugin = require('@vue/preload-webpack-plugin');
-const PreloadWebpackPlugin = require('./preload-webpack-plugin');
+const PreloadWebpackPlugin = require('@vue/preload-webpack-plugin');
 const path = require('path');
 module.exports = {
     mode: 'development',
