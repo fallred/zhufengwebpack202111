@@ -1,7 +1,8 @@
 
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const AssetPlugin = require('./asset-plugin');
-const PreloadWebpackPlugin = require('@vue/preload-webpack-plugin');
+//const PreloadWebpackPlugin = require('@vue/preload-webpack-plugin');
+const PreloadWebpackPlugin = require('./preload-webpack-plugin');
 const path = require('path');
 module.exports = {
     mode: 'development',
@@ -9,11 +10,6 @@ module.exports = {
     entry: {
         main: './src/index.js'
     },
-    /* entry: {
-        page1: './src/page1.js',
-        page2: './src/page2.js',
-        page3: './src/page3.js'
-    }, */
     output: {
         path: path.resolve(__dirname, 'dist'),
         //初始（initial）chunk 文件的名称
@@ -93,7 +89,7 @@ module.exports = {
     },
     plugins: [
         new PreloadWebpackPlugin({
-            rel: 'preload',
+            rel: 'prefetch',
             include: 'asyncChunks',
         }),
         new HtmlWebpackPlugin({
