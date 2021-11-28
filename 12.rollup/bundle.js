@@ -1,4 +1,5 @@
-var a = 1;
-var b = 2;
-var c = 3;
-console.log(a, b, c);
+import { name, age } from './msg';
+function say(hi) {
+    console.log(hi, name);
+}
+say();

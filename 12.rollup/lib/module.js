@@ -22,7 +22,8 @@ class Module {
                     let importName = specifier.imported.name;//导入的变量，也就是在导入的模块里叫什么名字
                     let localName = specifier.local.name;//本地变量，在当前模块叫什么
                     //this.imports['name'] = {localName:'name',source:'./msg',importName:'name'};
-                    this.imports[localName] = { source, importName };
+                    //为了方便记忆，我把格式统一一下
+                    this.imports[localName] = { localName, source, importName };
                 });
             }
             //找出this.exports
@@ -32,8 +33,9 @@ class Module {
                     let declarations = declaration.declarations;
                     declarations.forEach(declaration => {
                         let localName = declaration.id.name;//当前模块内声明的变量名
+                        let exportName = localName;
                         //记录导出了哪个变量，这个变量是通过哪个声明语名声明的
-                        this.exports[localName] = { localName, declaration };
+                        this.exports[exportName] = { localName, exportName, declaration };
                     });
                 }
             }
