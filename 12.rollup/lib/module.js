@@ -13,7 +13,18 @@ class Module {
         this.exports = {};//记录当前模块向外导出了哪些变量
         this.definitions = {};//记录变量是在哪个语句节点中定义的
         this.modifications = {};//记录修改变量的语句
+        this.canonicalNames = {};//这里放置着所有的变量名重命名后的结果
         this.analyse();//开始进行语法树的分析
+    }
+    rename(name, replacement) {
+        //name是原来的变量名 replacement替换后的变量名
+        this.canonicalNames[name] = replacement;
+    }
+    getCanonicalName(name) {
+        if (!hasOwnProperty(this.canonicalNames, name)) {
+            this.canonicalNames[name] = name;
+        }
+        return this.canonicalNames[name];
     }
     analyse() {
         this.ast.body.forEach(statement => {
@@ -122,6 +133,7 @@ class Module {
             //说明是模块自己声明的
         } else {
             //获取本模块内的变量声明语句，如果此语句没有包含过的话，递归添加到结果 里
+            debugger
             let statement = this.definitions[name];
             if (statement) {
                 if (statement._include) {

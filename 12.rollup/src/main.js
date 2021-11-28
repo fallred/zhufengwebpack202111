@@ -1,4 +1,4 @@
-if (true) {
-    var age = 12;
-}
-console.log(age);
+import { ageA } from './ageA.js';
+import { ageB } from './ageB.js';
+import { ageC } from './ageC.js';
+console.log(ageA, ageB, ageC);

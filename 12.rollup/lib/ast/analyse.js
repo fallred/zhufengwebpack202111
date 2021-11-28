@@ -13,16 +13,17 @@ function analyse(ast, magicString, module) {
     ast.body.forEach(statement => {
         //把变量添加到当前的作用域内
         function addToScope(name, isBlockDeclaration) {
-            debugger
             let added = currentScope.add(name, isBlockDeclaration);
+            debugger
             //判断当前scope是不是顶级作用域，如果是顶级的话就往 statement挂一个变量，表示它声明一个顶级变量
-            if (!added) {
+            if (!currentScope.parent || !added) {
                 //在当前的语句中添加一个定义的变量
                 statement._defines[name] = true;
             }
         }
         //给statement语法树节点添加属性
         Object.defineProperties(statement, {
+            _module: { value: module },
             //_source 就是这个语法树的节点在源码中对应那一部分节点源代码
             _source: { value: magicString.snip(statement.start, statement.end) },
             //当前节点是否已经 被 包含在结果中了

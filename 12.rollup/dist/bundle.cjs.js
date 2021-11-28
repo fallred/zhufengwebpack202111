@@ -1,10 +1,16 @@
-'use strict';
-var p1 = 1;
-var p2 = 2;
-function sum() {
-    var a = 1;
-    var b = 2;
-    var c = 3;
-    console.log(a + b);
-}
-sum();
+var age$2 = '年龄';
+var ageA = age$2 + '1';
+var age$1 = '年龄';
+var ageB = age$1 + '2';
+var age = '年龄';
+var ageC = age + '3';
+console.log(ageA, ageB, ageC);
+
+
+var age$2 = '年龄';
+var ageA = age$2 + '1'
+var age$1 = '年龄';
+var ageB = age$1 + '2'
+var age = '年龄';
+var ageC = age + '3'
+console.log(ageA, ageB, ageC);
