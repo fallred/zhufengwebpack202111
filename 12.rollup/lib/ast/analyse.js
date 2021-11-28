@@ -12,10 +12,11 @@ function analyse(ast, magicString, module) {
     //遍历所有的语法一级语句或者说顶级语句
     ast.body.forEach(statement => {
         //把变量添加到当前的作用域内
-        function addToScope(name) {
-            currentScope.add(name);
+        function addToScope(name, isBlockDeclaration) {
+            debugger
+            let added = currentScope.add(name, isBlockDeclaration);
             //判断当前scope是不是顶级作用域，如果是顶级的话就往 statement挂一个变量，表示它声明一个顶级变量
-            if (!currentScope.parent) {
+            if (!added) {
                 //在当前的语句中添加一个定义的变量
                 statement._defines[name] = true;
             }
@@ -40,12 +41,24 @@ function analyse(ast, magicString, module) {
                     //如果当前的节点是函数声明的话
                     case 'FunctionDeclaration':
                         //把函数的名称添加到当前的作用域，也就是全局作用域里
-                        addToScope(node.id.name);
+                        addToScope(node.id.name, false);
                         let names = node.params.map(param => param.name);
-                        newScope = new Scope({ name: node.id.name, parent: currentScope, names });
+                        newScope = new Scope({ name: node.id.name, parent: currentScope, names, block: false });
                         break;
                     case 'VariableDeclaration':
-                        node.declarations.forEach(declaration => addToScope(declaration.id.name));
+                        node.declarations.forEach(declaration => {
+                            if (node.kind === 'let' || node.kind === 'const') {
+                                addToScope(declaration.id.name, true);//这是一个块级声明 const let
+                            } else {
+                                addToScope(declaration.id.name, false);//var
+                            }
+                        });
+                        break;
+                    case 'BlockStatement':
+                        newScope = new Scope({
+                            parent: currentScope,
+                            block: true
+                        });
                         break;
                 }
                 //如果有值说明当前的节点创建了新的作用域

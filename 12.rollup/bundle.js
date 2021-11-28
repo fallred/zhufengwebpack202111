@@ -1,5 +1,4 @@
-var age = 13;
-age = 10;
-age += 1;
-age++;
+if (true) {
+    var age = 12;
+}
 console.log(age);

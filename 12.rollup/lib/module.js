@@ -2,6 +2,7 @@ const MagicString = require('magic-string');
 const { parse } = require('acorn');
 const analyse = require('./ast/analyse');
 const { hasOwnProperty } = require('./utils');
+const SYSTEMS = ['console', 'log'];
 class Module {
     constructor({ code, path, bundle }) {
         this.code = new MagicString(code, { filename: path });//源代码
@@ -122,11 +123,16 @@ class Module {
         } else {
             //获取本模块内的变量声明语句，如果此语句没有包含过的话，递归添加到结果 里
             let statement = this.definitions[name];
-            if (statement && !statement._include) {
-                //var age = 13;
-                return this.expandStatement(statement);
-            } else {
+            if (statement) {
+                if (statement._include) {
+                    return [];
+                } else {
+                    return this.expandStatement(statement);
+                }
+            } else if (SYSTEMS.includes(name)) {//console log
                 return [];
+            } else {
+                throw new Error(`ReferenceError: ${name} is not defined in current module`);
             }
         }
     }

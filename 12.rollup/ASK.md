@@ -52,3 +52,24 @@ depends=['age']
 2.去msg模块中找定义age变量的语句
 `var age = 13;`
 在此处，result = ['var age = 13;']
+
+
+解析main的时候，先展开console.log(age), 
+main A阶段
+---展开msg.js中的age
+然后去msg。js,取到age，
+age需要展开，
+msg的A阶段为空 
+msg的B阶段
+展开的时候先把自己的语句添加结果里放入result, var age =13;
+msg的C阶段
+然后把age的修改操作放入result，
+---结束展开msg.js中的age
+
+main的B阶段
+最后把console.log放入result,
+main的C阶段没有
+main。js没有age的修改操作，所以没有c阶段， 
+
+//块里面的var变量会提供到全局
+//块里面的let 和 const变量不会提供到全局

@@ -1,2 +1,4 @@
-import { name, age } from './msg';
+if (true) {
+    var age = 12;
+}
 console.log(age);
