@@ -11,6 +11,7 @@ class Module {
         this.imports = {};//记录当前模块从哪些模块导入了哪些变量
         this.exports = {};//记录当前模块向外导出了哪些变量
         this.definitions = {};//记录变量是在哪个语句节点中定义的
+        this.modifications = {};//记录修改变量的语句
         this.analyse();//开始进行语法树的分析
     }
     analyse() {
@@ -50,29 +51,60 @@ class Module {
                 //this.definitions['say']=function say(hi){}
                 this.definitions[name] = statement;
             });
+            //这里存放的是当前语句更新到的所有的变量
+            Object.keys(statement._modifies).forEach(name => {
+                //this.definitions['say']=function say(hi){}
+                if (!hasOwnProperty(this.modifications, name)) {
+                    this.modifications[name] = [];
+                }
+                this.modifications[name].push(statement);
+            });
         });
     }
     expandAllStatements() {
         let allStatements = [];
+        //循环所有的body语句，
         this.ast.body.forEach(statement => {
             //如果是导入语句的话直接忽略 ，不会放在结果 里
             if (statement.type === 'ImportDeclaration') return;
+            if (statement.type === 'VariableDeclaration') return;
+            if (statement.type === 'FunctionDeclaration') return;
             let statements = this.expandStatement(statement);
             allStatements.push(...statements);
         });
         return allStatements;
     }
     expandStatement(statement) {
+        //第二进来的是在msg模块的 var age = 13;语句
         statement._include = true;
         let result = [];
         //获得这个语句依赖或者说使用到了哪些变量
+        //var age = 13;
+        //A阶段
         const depends = Object.keys(statement._dependsOn);
         depends.forEach(dependName => {
             //找到这个依赖的变量对应的变量定义语句
             let definition = this.define(dependName);
             result.push(...definition);
         });
+        //B阶段 
         result.push(statement);
+        //再找定义的变量的修改语句
+        // 对于main来说，这个defines是空的
+        //C阶段
+        const defines = Object.keys(statement._defines);
+        defines.forEach(name => {//age
+            //找到当前模块内对这个变量的修改句 找age变量的修改语句
+            const modifications = hasOwnProperty(this.modifications, name) && this.modifications[name];
+            if (modifications) {
+                modifications.forEach(statement => {
+                    if (!statement._include) {
+                        let statements = this.expandStatement(statement);
+                        result.push(...statements)
+                    }
+                });
+            }
+        });
         return result;
     }
     //返回此变量对应的定义语句
@@ -91,6 +123,7 @@ class Module {
             //获取本模块内的变量声明语句，如果此语句没有包含过的话，递归添加到结果 里
             let statement = this.definitions[name];
             if (statement && !statement._include) {
+                //var age = 13;
                 return this.expandStatement(statement);
             } else {
                 return [];

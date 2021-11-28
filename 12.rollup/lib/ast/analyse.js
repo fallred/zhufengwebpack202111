@@ -29,7 +29,9 @@ function analyse(ast, magicString, module) {
             //当前statement节点声明了哪些变量
             _defines: { value: {} },
             //当前statement节点依赖读取了哪些变量
-            _dependsOn: { value: {} }
+            _dependsOn: { value: {} },
+            //这是存放着当前statement对应的修改语句， 这条语句修改了什么变量
+            _modifies: { value: {} },
         });
         walk(statement, {
             enter(node) {
@@ -62,13 +64,27 @@ function analyse(ast, magicString, module) {
     //在构建完作用域链之后，找到当前模块内声明的哪些变量之后
     //还需要找出当前模块内使用到了哪些变量 
     ast.body.forEach(statement => {
+        function checkForReads(node) {
+            if (node.type === 'Identifier') {
+                statement._dependsOn[node.name] = true;
+            }
+        }
+        function checkForWrites(node) {
+            function addNode(node) {//TODO
+                if (node.type === 'Identifier') {
+                    statement._modifies[node.name] = true;
+                }
+            }
+            if (node.type === 'AssignmentExpression') {
+                addNode(node.left);
+            } else if (node.type === 'UpdateExpression') {
+                addNode(node.argument);
+            }
+        }
         walk(statement, {
             enter(node) {
-                if (node.type === 'Identifier') {
-                    //说明我们要读取这个变量，依赖这个变量
-                    //不当是statement节点，包括它所有的子节点，只要用到了某个变量，都会添加根statement节点
-                    statement._dependsOn[node.name] = true;
-                }
+                checkForReads(node);//检查当前节点读取了哪些变量
+                checkForWrites(node);//检查当前节点修改了哪些变量
             }
         });
     });

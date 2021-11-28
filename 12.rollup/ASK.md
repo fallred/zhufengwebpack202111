@@ -44,3 +44,11 @@ tree shaking
 1. export var age = 13; 未使用到的导出语句消失 了
 2. import语句也消失 了
 3. 用到的导出变量 export var name = 'zhufeng';里的export 也消失了
+
+
+执行过程
+1.expandStatement `console.log(age);`
+depends=['age']
+2.去msg模块中找定义age变量的语句
+`var age = 13;`
+在此处，result = ['var age = 13;']
