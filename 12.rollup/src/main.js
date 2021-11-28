@@ -1,5 +1,5 @@
 import { name, age } from './msg';
-function say(hi) {
-    console.log(hi, name);
+function say() {
+    console.log(name);
 }
 say();

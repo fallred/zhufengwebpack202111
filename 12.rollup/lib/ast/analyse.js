@@ -42,7 +42,7 @@ function analyse(ast, magicString, module) {
                         let names = node.params.map(param => param.name);
                         newScope = new Scope({ name: node.id.name, parent: currentScope, names });
                         break;
-                    case 'VariableDeclarator':
+                    case 'VariableDeclaration':
                         node.declarations.forEach(declaration => addToScope(declaration.id.name));
                         break;
                 }
@@ -55,6 +55,19 @@ function analyse(ast, magicString, module) {
             leave(node) {
                 if (hasOwnProperty(node, '_scope')) {
                     currentScope = currentScope.parent;
+                }
+            }
+        });
+    });
+    //在构建完作用域链之后，找到当前模块内声明的哪些变量之后
+    //还需要找出当前模块内使用到了哪些变量 
+    ast.body.forEach(statement => {
+        walk(statement, {
+            enter(node) {
+                if (node.type === 'Identifier') {
+                    //说明我们要读取这个变量，依赖这个变量
+                    //不当是statement节点，包括它所有的子节点，只要用到了某个变量，都会添加根statement节点
+                    statement._dependsOn[node.name] = true;
                 }
             }
         });

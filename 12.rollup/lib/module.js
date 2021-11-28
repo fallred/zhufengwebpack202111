@@ -1,6 +1,7 @@
 const MagicString = require('magic-string');
 const { parse } = require('acorn');
 const analyse = require('./ast/analyse');
+const { hasOwnProperty } = require('./utils');
 class Module {
     constructor({ code, path, bundle }) {
         this.code = new MagicString(code, { filename: path });//源代码
@@ -40,14 +41,61 @@ class Module {
                 }
             }
         });
+        //获取定义的变量和读取的变量
         analyse(this.ast, this.code, this);
+        this.ast.body.forEach(statement => {
+            //statement._defines可以从语句获取变量名
+            //可以从变量名叫定义这个变量的语句
+            Object.keys(statement._defines).forEach(name => {
+                //this.definitions['say']=function say(hi){}
+                this.definitions[name] = statement;
+            });
+        });
     }
     expandAllStatements() {
         let allStatements = [];
         this.ast.body.forEach(statement => {
-            allStatements.push(statement);
+            //如果是导入语句的话直接忽略 ，不会放在结果 里
+            if (statement.type === 'ImportDeclaration') return;
+            let statements = this.expandStatement(statement);
+            allStatements.push(...statements);
         });
         return allStatements;
+    }
+    expandStatement(statement) {
+        statement._include = true;
+        let result = [];
+        //获得这个语句依赖或者说使用到了哪些变量
+        const depends = Object.keys(statement._dependsOn);
+        depends.forEach(dependName => {
+            //找到这个依赖的变量对应的变量定义语句
+            let definition = this.define(dependName);
+            result.push(...definition);
+        });
+        result.push(statement);
+        return result;
+    }
+    //返回此变量对应的定义语句
+    define(name) {
+        //判断这个变量是外部导入的，还是模块内声明的
+        if (hasOwnProperty(this.imports, name)) {
+            //localName name2 importName name source home
+            const { localName, importName, source } = this.imports[name];
+            //获取依赖的模块 source依赖的模块名 this.path=当前模块的绝对路径
+            let importModule = this.bundle.fetchModule(source, this.path);
+            //externalLocalName=localName=hname
+            let { localName: externalLocalName } = importModule.exports[importName];
+            return importModule.define(externalLocalName);
+            //说明是模块自己声明的
+        } else {
+            //获取本模块内的变量声明语句，如果此语句没有包含过的话，递归添加到结果 里
+            let statement = this.definitions[name];
+            if (statement && !statement._include) {
+                return this.expandStatement(statement);
+            } else {
+                return [];
+            }
+        }
     }
 }
 module.exports = Module;

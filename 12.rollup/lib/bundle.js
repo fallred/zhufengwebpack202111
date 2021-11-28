@@ -19,10 +19,21 @@ class Bundle {
     }
     /**
      * 获取模块
-     * @param {*} importee 模块的路径，可能是绝对路径，也可能是相对路径
+     * @param {*} importee 模块的路径，可能是绝对路径，也可能是相对路径 msg.js
+     *  @param {*}importer 从哪个模块导入 main.js
      */
-    fetchModule(importee) {
-        let route = importee;
+    fetchModule(importee, importer) {
+        let route;
+        //如果importer为空说明这是一个入口模块，没有引入它的父模块
+        if (!importer) {
+            route = importee;
+        } else {
+            if (path.isAbsolute(importee)) {
+                route = importee;
+            } else if (importee[0] === '.') {
+                route = path.resolve(path.dirname(importer), importee.replace(/\.js$/, '') + '.js');
+            }
+        }
         if (route) {
             let code = fs.readFileSync(route, 'utf8');
             const module = new Module({
@@ -35,10 +46,15 @@ class Bundle {
     }
     generate() {
         let bundleString = new MagicString.Bundle();
+        debugger
         this.statements.forEach(statement => {
+            const source = statement._source.clone();
+            if (/^Export/.test(statement.type)) {
+                source.remove(statement.start, statement.declaration.start);
+            }
             //把每个astNode语法树节点代码添加到bundleString
             bundleString.addSource({
-                content: statement._source,
+                content: source,
                 separator: '\n'
             });
         });
