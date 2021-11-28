@@ -1,10 +1,12 @@
 
 const fs = require('fs');
+const path = require('path');
 const Module = require('./module');
 const MagicString = require('magic-string')
 class Bundle {
     constructor(options) {
-        this.entryPath = options.entry;
+        //这样写可以兼容没有添加.js后缀或者传递的路径是一个相对路径的情况
+        this.entryPath = path.resolve(options.entry.replace(/\.js$/, '') + '.js');
     }
     build(filename) {
         let entryModule = this.fetchModule(this.entryPath);

@@ -33,3 +33,14 @@ console.log(a,b);
 var a =1;
 var b =2;
 console.log(a,b);
+
+
+下来我们学习
+scope hosting
+tree shaking
+
+
+经过tree shaking之后
+1. export var age = 13; 未使用到的导出语句消失 了
+2. import语句也消失 了
+3. 用到的导出变量 export var name = 'zhufeng';里的export 也消失了

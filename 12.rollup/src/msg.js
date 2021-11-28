@@ -1,1 +1,2 @@
-export var a = 1;
+export var name = 'zhufeng';
+export var age = 13;
