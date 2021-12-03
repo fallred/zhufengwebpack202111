@@ -17,6 +17,7 @@ async function readBody(responseBody) {
 }
 
 function resolveVue(root) {
+    console.log('root', root);
     //创建一个自定义require方法。因为如果你在这里直接 使用require，它会在当前目录找文件
     let require = Module.createRequire(root);
     const resolvePath = (moduleName) => require.resolve(`@vue/${moduleName}/dist/${moduleName}.esm-bundler.js`);

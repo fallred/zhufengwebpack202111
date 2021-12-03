@@ -10,6 +10,7 @@ async function serverPluginModuleResolve({ app, root }) {
         }
         //如果是第三方模块，继续解析处理
         let moduleName = result[1];//vue
+        
         let vueResolved = resolveVue(root);
         ctx.type = 'js';
         const responseBody = await fs.readFile(vueResolved[moduleName], 'utf8');

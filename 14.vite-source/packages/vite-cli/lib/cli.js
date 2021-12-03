@@ -2,6 +2,8 @@ const Koa = require('koa');
 const serverPluginServeStatic = require('./serverPluginServeStatic');
 const serverPluginModuleRewrite = require('./serverPluginModuleRewrite');
 const serverPluginModuleResolve = require('./serverPluginModuleResolve');
+const serverPluginInjectProcess = require('./serverPluginInjectProcess');
+const serverPluginVue = require('./serverPluginVue');
 function createServer() {
     //获取app
     const app = new Koa();
@@ -13,8 +15,10 @@ function createServer() {
         root
     }
     const plugins = [
+        serverPluginInjectProcess,
         serverPluginModuleRewrite,
         serverPluginModuleResolve,
+        serverPluginVue,
         serverPluginServeStatic
     ]
     plugins.forEach(plugin => plugin(context));
