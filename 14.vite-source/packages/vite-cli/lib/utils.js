@@ -1,4 +1,5 @@
 const { Readable } = require('stream');
+const Module = require('module');
 async function readBody(responseBody) {
     if (responseBody instanceof Readable) {
         return new Promise(resolve => {

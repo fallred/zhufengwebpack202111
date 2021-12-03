@@ -1,5 +1,6 @@
 const fs = require('fs').promises;
 const moduleRegex = /\/node_modules\/\.vite\/(.+?)\.js/;
+const { resolveVue } = require('./utils');
 async function serverPluginModuleResolve({ app, root }) {
     app.use(async (ctx, next) => {
         let result = ctx.path.match(moduleRegex);
