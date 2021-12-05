@@ -1,6 +1,6 @@
 const Stream = require('stream');
 const { inherits } = require('util');
-function Readable(options) {
+function Readable(options = {}) {
     Stream.call(this, options);
     this._readableState = {
         ended: false,//水井是否抽取结束,水井是否已经干涸
@@ -42,4 +42,13 @@ Readable.prototype.push = function (chunk) {
         this._readableState.buffer.push(chunk);
     }
 }
+Readable.prototype.pipe = function (dest) {
+    this.on('data', function (data) {
+        dest.write(data);
+    });
+    this.on('end', function () {
+        dest.end();
+    });
+    return dest;
+};
 module.exports = Readable;
