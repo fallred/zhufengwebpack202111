@@ -2,6 +2,7 @@
 //gulp task1 task2 task3
 //process.argv=[node文件绝对路径,脚本文件的绝对路径,task1,task2,task3]
 const path = require('path');
+const { timestamp } = require('./utils');
 const chalk = require('chalk');
 const logEvents = require('./logEvents');
 const registerExports = require('./registerExports');
@@ -16,9 +17,10 @@ var gulpInst = require(modulePath);
 logEvents(gulpInst);
 //获取配置文件的路径
 const configPath = path.join(process.cwd(), 'gulpfile.js');
-console.log(`[20:42:21] Using gulpfile ${chalk.magenta(configPath)}`);
+console.log(`${timestamp()} Using gulpfile ${chalk.magenta(configPath)}`);
 const exported = require(configPath);
 //把导出的任务注册到gulp实例上
 registerExports(gulpInst, exported);
-var runMethod = 'parallel';
-gulpInst[runMethod](toRun)(err => console.log('well done'));
+const parallel = gulpInst.parallel;
+const parallelMethod = parallel(toRun);
+parallelMethod(err => console.log('well done'));
