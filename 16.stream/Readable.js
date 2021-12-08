@@ -44,10 +44,13 @@ Readable.prototype.push = function (chunk) {
 }
 Readable.prototype.pipe = function (dest) {
     this.on('data', function (data) {
-        dest.write(data);
+        let lessThanMark = dest.write(data);
+        if (!lessThanMark) {
+            this.pause();
+        }
     });
-    this.on('end', function () {
-        dest.end();
+    this.on('drain', function () {
+        this.resume();
     });
     return dest;
 };
