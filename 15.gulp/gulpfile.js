@@ -31,7 +31,7 @@ const html = () => {
 const images = async () => {
     const imagemin = await import('gulp-imagemin');
     return src("src/assets/images/**/*.@(jpg|png|gif|svg)", { base: 'src' })
-        .pipe(imagemin.default())
+        //.pipe(imagemin.default())
         .pipe(dest('dist'))
 }
 
