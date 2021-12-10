@@ -1,8 +1,14 @@
 var through = require('through2');
-var { PluginError } = require('gulp-util');
 const { PassThrough } = require('stream');
+var { PluginError } = require('gulp-util');
 //插件的名称
 const PLUGIN_NAME = 'gulp-prefix';
+function prefixStream(prefixText) {
+    //var stream = through();
+    const stream = new PassThrough();
+    stream.write(prefixText);
+    return stream;
+}
 
 function gulpPrefix(prefixText) {
     if (!prefixText) {
@@ -12,14 +18,17 @@ function gulpPrefix(prefixText) {
     prefixText = Buffer.from(prefixText);
     const stream = through.obj(function (file, encoding, callback) {
         //虚拟文件对象，它的contents,我们这个插件只支持 Buffer
+        if (file.isBuffer()) {
+            this.emit('error', new PluginError(PLUGIN_NAME, '此插件不支持Buffer!'));
+            return callback();
+        }
         if (file.isStream()) {
-            const stream = new PassThrough();
-            stream.write(prefixText);
+            //file.contents = Buffer.concat([prefixText, file.contents]);
+            let stream = prefixStream(prefixText);
             //让老的流写通过管道的方式写入stream里
             file.contents = file.contents.pipe(stream);
-        } else if (file.isBuffer()) {
-            file.contents = Buffer.concat([prefixText, file.contents]);
         }
+        //this.push(file);
         callback(null, file);
     });
     return stream;

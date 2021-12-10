@@ -11,7 +11,8 @@
   "license": "ISC",
   "devDependencies": {
     "gulp": "^4.0.2",
-    "gulp-cli": "^2.3.0"
+    "gulp-cli": "^2.3.0",
+    "gulp-util": "^3.0.8"
   },
   "dependencies": {
     "gulp6": "file:../gulp6"

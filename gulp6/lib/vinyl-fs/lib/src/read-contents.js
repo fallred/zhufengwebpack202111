@@ -8,6 +8,7 @@ function readContents() {
         fs.readFile(file.path, onReadFile);
         function onReadFile(err, data) {
             file.contents = data;
+            //this.push
             callback(err, file);
         }
     }
