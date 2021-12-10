@@ -1,6 +1,6 @@
 //const util = require('util');
 const UnderTaker = require('undertaker');
-const vinyl = require('vinyl-fs');
+const vinyl = require('./vinyl-fs');
 function Gulp() {
     //把子类的实例传给父类的构造函数，是用来实例化父类的私有属性
     UnderTaker.call(this);

@@ -6,7 +6,6 @@ const { timestamp } = require('./utils');
 const chalk = require('chalk');
 const logEvents = require('./logEvents');
 const registerExports = require('./registerExports');
-console.log('process.argv', process.argv);
 var tasks = process.argv.slice(2);
 //如果传了要执行的任务，就直接用，如果没传就执行default
 const toRun = tasks.length > 0 ? tasks : ['default'];
