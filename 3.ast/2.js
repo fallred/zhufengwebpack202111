@@ -13,6 +13,15 @@ let arrowFunctionPlugin = {
         }
     }
 }
+function getScopeInfo(path) {
+    let thisPaths = [];
+    path.traverse({
+        ThisExpression(path) {
+            thisPaths.push(path);
+        }
+    })
+    return thisPaths;
+}
 /**
  * 1.要在函数的外面声明一个_this变量，值是this
  * 2.在函数的内容，换this 变成_this
@@ -34,19 +43,12 @@ function hostFunctionEnvironment(path) {
     //替换this
     let thisPaths = getScopeInfo(path);
     thisPaths.forEach(thisPath => {
+        const thisBind = types.identifier(thisBindings);
         //把this替换成_this
-        thisPath.replaceWith(types.identifier(thisBindings));
+        thisPath.replaceWith(thisBind);
     })
 }
-function getScopeInfo(path) {
-    let thisPaths = [];
-    path.traverse({
-        ThisExpression(path) {
-            thisPaths.push(path);
-        }
-    })
-    return thisPaths;
-}
+
 let sourceCode = `
 const sum = (a, b) => {
     console.log(this);

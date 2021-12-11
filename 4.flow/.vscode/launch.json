@@ -3,6 +3,16 @@
     "configurations": [
         {
             "type": "node",
+            "name": "debug",
+            "request": "launch",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "cwd":"${workspaceFolder}",
+            "program": "${workspaceFolder}/debugger.js"
+        },
+        {
+            "type": "node",
             "request": "launch",
             "name": "debug webpack",
             "skipFiles": [

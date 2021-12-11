@@ -16,7 +16,7 @@ class Compiler {
             compilation: new SyncHook(["compilation", "params"]),
         }
     }
-    //4.执行对象的 run 方法开始执行编译
+    // 4.执行对象的 run 方法开始执行编译
     run(callback) {
         //在执行Compiler的run方法开头触发run这个钩子
         this.hooks.run.call();

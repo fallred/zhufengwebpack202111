@@ -3,7 +3,7 @@ let esprima = require('esprima');
 //它可遍历语法权树，修改树上的语法节点
 let estraverse = require('estraverse');
 let escodegen = require('escodegen');
-let sourceCode = 'function ast(){}';
+let sourceCode = 'let tips = ["11", "22"]; function ast(){}';
 let ast = esprima.parse(sourceCode);
 let indent = 0;
 const padding = () => ` `.repeat(indent);
